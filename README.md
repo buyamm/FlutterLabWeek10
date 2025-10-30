@@ -7,7 +7,7 @@
 
 ## Project 2 - Todo App
 | Màn hình danh sách + Thêm công việc | Filter công việc |
-|------------------|----------------|----------------|
+|------------------|----------------|
 | ![Danh sách công việc + Thêm công việc](ui/project2image-1.png) | ![Filter công việc](ui/project2image.png) |
 
 ## Project 3 - News Reader App
