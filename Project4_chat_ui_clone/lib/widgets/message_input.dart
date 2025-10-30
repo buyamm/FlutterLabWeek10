@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class MessageInput extends StatefulWidget {
   const MessageInput({super.key, required this.onSend});
-
   final ValueChanged<String> onSend;
 
   @override
@@ -10,25 +9,20 @@ class MessageInput extends StatefulWidget {
 }
 
 class _MessageInputState extends State<MessageInput> {
-  late final TextEditingController _controller;
+  final TextEditingController _controller = TextEditingController();
+  bool _hasText = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    _controller.addListener(() {
+      setState(() => _hasText = _controller.text.trim().isNotEmpty);
+    });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _submitMessage() {
-    final String text = _controller.text.trim();
-    if (text.isEmpty) {
-      return;
-    }
+  void _submit() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
     widget.onSend(text);
     _controller.clear();
   }
@@ -36,32 +30,52 @@ class _MessageInputState extends State<MessageInput> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
         child: Row(
           children: [
             Expanded(
               child: TextField(
                 controller: _controller,
-                textInputAction: TextInputAction.send,
                 minLines: 1,
                 maxLines: 4,
-                onSubmitted: (_) => _submitMessage(),
-                decoration: const InputDecoration(
-                  hintText: 'Message',
+                decoration: InputDecoration(
+                  hintText: 'Type a message...',
+                  filled: true,
+                  fillColor: theme.colorScheme.surface,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(width: 12),
-            IconButton(
-              onPressed: _submitMessage,
-              icon: const Icon(Icons.send_rounded),
-              color: theme.colorScheme.primary,
-              splashRadius: 24,
-              tooltip: 'Send',
+            const SizedBox(width: 8),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                color:
+                    _hasText
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.surfaceVariant,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: _hasText ? _submit : null,
+                icon: Icon(
+                  Icons.send_rounded,
+                  color:
+                      _hasText
+                          ? theme.colorScheme.onPrimary
+                          : theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
           ],
         ),

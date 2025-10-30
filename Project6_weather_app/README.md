@@ -1,5 +1,5 @@
 # Weather App
-
+![alt text](image.png)
 ![Ảnh xem trước](assets/image.png)
 
 Ứng dụng Flutter nhỏ giúp lấy vị trí người dùng để hiển thị thời tiết hiện tại và dự báo 12 giờ kế tiếp. Dự án minh họa cách xin quyền truy cập vị trí, gọi REST API và tổ chức widget gọn gàng.

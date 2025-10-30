@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/weather.dart';
 import '../theme/app_theme.dart';
 
@@ -16,41 +15,58 @@ class CurrentWeatherCard extends StatelessWidget {
     );
 
     return Card(
-      child: Padding(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade300, Colors.blue.shade600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         padding: const EdgeInsets.all(AppTheme.elementSpacing),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Current location',
-              style: theme.textTheme.titleMedium,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: Colors.white70,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  '${weather.temperature.toStringAsFixed(1)}°C',
-                  style: headline,
-                ),
-                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        weather.conditionLabel,
-                        style: theme.textTheme.titleMedium,
+                        '${weather.temperature.toStringAsFixed(1)}°C',
+                        style: headline?.copyWith(color: Colors.white),
                       ),
                       const SizedBox(height: 4),
                       Text(
+                        weather.conditionLabel,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
                         'Wind: ${weather.windSpeed.toStringAsFixed(1)} m/s · ${_windDirectionToCompass(weather.windDirectionDeg)}',
-                        style: theme.textTheme.bodyMedium,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.white70,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Lat ${weather.latitude.toStringAsFixed(3)}, Lon ${weather.longitude.toStringAsFixed(3)}',
-                        style: theme.textTheme.bodySmall,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.white70,
+                        ),
                       ),
                     ],
                   ),
@@ -60,7 +76,7 @@ class CurrentWeatherCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               'Updated at ${_formatTime(weather.time)}',
-              style: theme.textTheme.bodySmall,
+              style: theme.textTheme.bodySmall?.copyWith(color: Colors.white70),
             ),
           ],
         ),

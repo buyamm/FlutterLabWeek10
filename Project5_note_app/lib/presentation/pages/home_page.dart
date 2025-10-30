@@ -9,13 +9,27 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notes'),
+        title: const Text('My Notes 📝'),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [colorScheme.primary, colorScheme.primaryContainer],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Consumer<NoteProvider>(
         builder: (context, provider, _) {
-          final notes = provider.getAllNotes();
+          final notes = List.of(provider.getAllNotes())
+            ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
           if (notes.isEmpty) {
             return const _EmptyState();
           }
@@ -29,23 +43,29 @@ class HomePage extends StatelessWidget {
               return NoteCard(
                 note: note,
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/detail',
-                    arguments: note.id,
-                  );
+                  Navigator.pushNamed(context, '/detail', arguments: note.id);
                 },
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.pushNamed(context, '/detail');
-        },
-        label: const Text('New Note'),
-        icon: const Icon(Icons.add),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [colorScheme.primary, colorScheme.secondary],
+          ),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.pushNamed(context, '/detail');
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          label: const Text('New Note'),
+          icon: const Icon(Icons.add_rounded),
+        ),
       ),
     );
   }
@@ -64,24 +84,25 @@ class _EmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.note_alt_outlined,
-              size: 64,
+              Icons.note_add_outlined,
+              size: 80,
               color: colorScheme.primary.withOpacity(0.6),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Text(
-              'Chưa có ghi chú nào',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: colorScheme.onSurface.withOpacity(0.6),
-                  ),
+              'Không có ghi chú nào!',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface.withOpacity(0.8),
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              'Chạm vào nút + bên dưới để tạo ghi chú đầu tiên của bạn.',
+              'Chạm vào nút + bên dưới để thêm ghi chú đầu tiên của bạn ✨',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
+                color: colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],

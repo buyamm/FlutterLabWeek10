@@ -10,18 +10,10 @@ import '../widgets/expense_form.dart';
 import '../widgets/expense_tile.dart';
 import 'stats_screen.dart';
 
-enum ExpenseFilter {
-  all,
-  today,
-  week,
-  month,
-}
+enum ExpenseFilter { all, today, week, month }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    super.key,
-    required this.repository,
-  });
+  const HomeScreen({super.key, required this.repository});
 
   final ExpenseRepository repository;
 
@@ -229,17 +221,13 @@ class _TotalCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Total Today',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
+            Text('Total Today', style: Theme.of(context).textTheme.labelLarge),
             const SizedBox(height: 8),
             Text(
               currency(amount),
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -249,10 +237,7 @@ class _TotalCard extends StatelessWidget {
 }
 
 class _FilterSelector extends StatelessWidget {
-  const _FilterSelector({
-    required this.filter,
-    required this.onChanged,
-  });
+  const _FilterSelector({required this.filter, required this.onChanged});
 
   final ExpenseFilter filter;
   final ValueChanged<ExpenseFilter> onChanged;
@@ -266,22 +251,10 @@ class _FilterSelector extends StatelessWidget {
       ),
       child: SegmentedButton<ExpenseFilter>(
         segments: const [
-          ButtonSegment(
-            value: ExpenseFilter.all,
-            label: Text('All'),
-          ),
-          ButtonSegment(
-            value: ExpenseFilter.today,
-            label: Text('Today'),
-          ),
-          ButtonSegment(
-            value: ExpenseFilter.week,
-            label: Text('This Week'),
-          ),
-          ButtonSegment(
-            value: ExpenseFilter.month,
-            label: Text('This Month'),
-          ),
+          ButtonSegment(value: ExpenseFilter.all, label: Text('All')),
+          ButtonSegment(value: ExpenseFilter.today, label: Text('Today')),
+          ButtonSegment(value: ExpenseFilter.week, label: Text('This Week')),
+          ButtonSegment(value: ExpenseFilter.month, label: Text('This Month')),
         ],
         selected: {filter},
         onSelectionChanged: (selection) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-import '../models/weather.dart';
+import '../models/weather.dart' as weather_model;
 import '../services/geolocator_service.dart';
 import '../services/weather_api.dart';
 import '../theme/app_theme.dart';
@@ -19,7 +19,7 @@ class WeatherScreen extends StatefulWidget {
 class _WeatherScreenState extends State<WeatherScreen> {
   late final GeolocatorService _geolocatorService;
   late final WeatherApi _weatherApi;
-  Future<Weather>? _weatherFuture;
+  Future<weather_model.Weather>? _weatherFuture;
 
   @override
   void initState() {
@@ -29,7 +29,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     _weatherFuture = _loadWeather();
   }
 
-  Future<Weather> _loadWeather() async {
+  Future<weather_model.Weather> _loadWeather() async {
     final position = await _geolocatorService.getCurrentPosition();
     return _weatherApi.fetchWeather(position.latitude, position.longitude);
   }
@@ -57,7 +57,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       body: RefreshIndicator(
         onRefresh: _refresh,
         displacement: 36,
-        child: FutureBuilder<Weather>(
+        child: FutureBuilder<weather_model.Weather>(
           future: _weatherFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -114,7 +114,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     );
   }
 
-  Widget _buildContent(Weather weather) {
+  Widget _buildContent(weather_model.Weather weather) {
     return ListView(
       physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       padding: const EdgeInsets.symmetric(

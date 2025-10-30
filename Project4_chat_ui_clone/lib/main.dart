@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'screens/chat_screen.dart';
 import 'theme/app_theme.dart';
 
@@ -13,11 +12,10 @@ class ChatUIApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'chat_ui_clone',
+      title: 'Modern Chat UI',
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      debugShowCheckedModeBanner: false,
       home: const ChatScreen(),
     );
   }

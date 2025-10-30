@@ -8,16 +8,10 @@ import '../utils/formatters.dart';
 import '../widgets/charts/category_pie_chart.dart';
 import '../widgets/charts/weekly_bar_chart.dart';
 
-enum StatsRange {
-  week,
-  month,
-}
+enum StatsRange { week, month }
 
 class StatsScreen extends StatefulWidget {
-  const StatsScreen({
-    super.key,
-    required this.repository,
-  });
+  const StatsScreen({super.key, required this.repository});
 
   final ExpenseRepository repository;
 
@@ -31,27 +25,34 @@ class _StatsScreenState extends State<StatsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Statistics'),
-      ),
+      appBar: AppBar(title: const Text('Statistics')),
       body: ValueListenableBuilder<Box<Expense>>(
         valueListenable: widget.repository.watch(),
         builder: (context, _, __) {
           final now = DateTime.now();
-          final rangeStart = _range == StatsRange.week
-              ? _startOfDay(now.subtract(Duration(days: now.weekday - 1)))
-              : DateTime(now.year, now.month, 1);
+          final rangeStart =
+              _range == StatsRange.week
+                  ? _startOfDay(now.subtract(Duration(days: now.weekday - 1)))
+                  : DateTime(now.year, now.month, 1);
           final rangeEnd = _endOfDay(now);
 
-          final totals = widget.repository.totalsByCategory(rangeStart, rangeEnd);
-          final rangeTotal = widget.repository.totalForRange(rangeStart, rangeEnd);
-          final expenses = widget.repository
-              .getAll()
-              .where(
-                (expense) =>
-                    !expense.date.isBefore(rangeStart) && !expense.date.isAfter(rangeEnd),
-              )
-              .toList();
+          final totals = widget.repository.totalsByCategory(
+            rangeStart,
+            rangeEnd,
+          );
+          final rangeTotal = widget.repository.totalForRange(
+            rangeStart,
+            rangeEnd,
+          );
+          final expenses =
+              widget.repository
+                  .getAll()
+                  .where(
+                    (expense) =>
+                        !expense.date.isBefore(rangeStart) &&
+                        !expense.date.isAfter(rangeEnd),
+                  )
+                  .toList();
 
           final weeklySeries = widget.repository.last7DaysSeries();
 
@@ -160,10 +161,7 @@ class _StatsScreenState extends State<StatsScreen> {
 }
 
 class _RangeSelector extends StatelessWidget {
-  const _RangeSelector({
-    required this.range,
-    required this.onChanged,
-  });
+  const _RangeSelector({required this.range, required this.onChanged});
 
   final StatsRange range;
   final ValueChanged<StatsRange> onChanged;
@@ -172,14 +170,8 @@ class _RangeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return SegmentedButton<StatsRange>(
       segments: const [
-        ButtonSegment(
-          value: StatsRange.week,
-          label: Text('This Week'),
-        ),
-        ButtonSegment(
-          value: StatsRange.month,
-          label: Text('This Month'),
-        ),
+        ButtonSegment(value: StatsRange.week, label: Text('This Week')),
+        ButtonSegment(value: StatsRange.month, label: Text('This Month')),
       ],
       selected: {range},
       onSelectionChanged: (selection) {

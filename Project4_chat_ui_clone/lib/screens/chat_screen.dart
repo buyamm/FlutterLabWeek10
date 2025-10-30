@@ -1,6 +1,5 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-
-import '../data/mock_messages.dart';
 import '../models/message.dart';
 import '../widgets/chat_bubble.dart';
 import '../widgets/message_input.dart';
@@ -13,45 +12,77 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final List<Message> _messages = List<Message>.of(mockMessages);
+  final List<Message> _messages = [];
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _handleSend(String text) {
-    final Message newMessage = Message(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      text: text,
-      isSender: true,
-      timestamp: DateTime.now(),
-    );
-
-    setState(() {
-      _messages.add(newMessage);
-    });
-
+    // Khởi tạo vài tin mẫu
+    _messages.addAll([
+      Message(
+        id: '1',
+        text: 'Hey! How are you today?',
+        isSender: false,
+        timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
+      ),
+      Message(
+        id: '2',
+        text: 'I’m great 😄 Just working on Flutter stuff.',
+        isSender: true,
+        timestamp: DateTime.now().subtract(const Duration(minutes: 3)),
+      ),
+    ]);
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
   void _scrollToBottom() {
-    if (!_scrollController.hasClients) {
-      return;
-    }
+    if (!_scrollController.hasClients) return;
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 350),
       curve: Curves.easeOut,
     );
+  }
+
+  void _handleSend(String text) {
+    if (text.trim().isEmpty) return;
+
+    final msg = Message(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      text: text.trim(),
+      isSender: true,
+      timestamp: DateTime.now(),
+    );
+    setState(() => _messages.add(msg));
+    _scrollToBottom();
+
+    // Giả lập phản hồi sau 1s
+    Timer(const Duration(seconds: 1), () {
+      setState(() {
+        _messages.add(
+          Message(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            text: _generateReply(),
+            isSender: false,
+            timestamp: DateTime.now(),
+          ),
+        );
+      });
+      _scrollToBottom();
+    });
+  }
+
+  String _generateReply() {
+    const replies = [
+      "That's awesome! 💬",
+      "Haha I see 😄",
+      "Tell me more!",
+      "Sounds interesting 👀",
+      "I totally agree 👍",
+    ];
+    replies.shuffle();
+    return replies.first;
   }
 
   @override
@@ -65,14 +96,22 @@ class _ChatScreenState extends State<ChatScreen> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 16),
           child: CircleAvatar(
-            radius: 20,
-            backgroundColor: theme.colorScheme.primaryContainer,
             backgroundImage: const NetworkImage(
               'https://i.pravatar.cc/150?img=12',
             ),
+            backgroundColor: theme.colorScheme.primaryContainer,
           ),
         ),
-        title: const Text('Phung Hao'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              'Truong Cong Ly',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('Online', style: TextStyle(fontSize: 13, color: Colors.green)),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -80,12 +119,10 @@ class _ChatScreenState extends State<ChatScreen> {
             child: ListView.builder(
               controller: _scrollController,
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: _messages.length,
-              itemBuilder: (BuildContext context, int index) {
-                final Message message = _messages[index];
-                return ChatBubble(message: message);
-              },
+              itemBuilder:
+                  (context, index) => ChatBubble(message: _messages[index]),
             ),
           ),
           MessageInput(onSend: _handleSend),

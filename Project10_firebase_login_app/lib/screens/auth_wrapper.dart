@@ -16,8 +16,18 @@ class AuthWrapper extends StatelessWidget {
       stream: authRepository.authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          // nicer loading screen
+          return Scaffold(
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF4E54C8), Color(0xFF8F94FB)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
           );
         }
 

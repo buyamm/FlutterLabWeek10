@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/note_provider.dart';
 
 class NoteDetailPage extends StatefulWidget {
@@ -52,8 +51,14 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
 
     if (_noteId == null) {
       await noteProvider.addNote(title: title, content: content);
+      _showSnack('Ghi chú đã được tạo mới!');
     } else {
-      await noteProvider.updateNote(id: _noteId!, title: title, content: content);
+      await noteProvider.updateNote(
+        id: _noteId!,
+        title: title,
+        content: content,
+      );
+      _showSnack('Đã cập nhật ghi chú!');
     }
 
     if (!mounted) return;
@@ -65,20 +70,34 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
 
     final noteProvider = context.read<NoteProvider>();
     await noteProvider.deleteNote(_noteId!);
+    _showSnack('Đã xóa ghi chú');
     if (!mounted) return;
     Navigator.pop(context);
+  }
+
+  void _showSnack(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final isEditing = _noteId != null;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Chỉnh sửa ghi chú' : 'Tạo ghi chú'),
+        backgroundColor: colorScheme.primaryContainer,
         actions: [
           IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () => _handleSave(),
+            icon: const Icon(Icons.check_rounded),
+            onPressed: _handleSave,
             tooltip: 'Lưu ghi chú',
           ),
         ],
@@ -93,9 +112,12 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
               children: [
                 TextFormField(
                   controller: _titleController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Tiêu đề',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: const Icon(Icons.title_rounded),
                   ),
                   textInputAction: TextInputAction.next,
                   validator: (value) {
@@ -108,13 +130,15 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _contentController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Nội dung',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     alignLabelWithHint: true,
                   ),
                   maxLines: null,
-                  minLines: 6,
+                  minLines: 8,
                   keyboardType: TextInputType.multiline,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -125,9 +149,9 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                 ),
                 const SizedBox(height: 24),
                 FilledButton.icon(
-                  onPressed: () => _handleSave(),
+                  onPressed: _handleSave,
                   icon: const Icon(Icons.save_outlined),
-                  label: Text(isEditing ? 'Cập nhật ghi chú' : 'Lưu ghi chú'),
+                  label: Text(isEditing ? 'Cập nhật' : 'Lưu ghi chú'),
                 ),
                 if (isEditing) ...[
                   const SizedBox(height: 12),
@@ -135,33 +159,36 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                     icon: const Icon(Icons.delete_outline),
                     label: const Text('Xóa ghi chú'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.error,
+                      foregroundColor: colorScheme.error,
                     ),
                     onPressed: () async {
                       final confirm = await showDialog<bool>(
                         context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Xóa ghi chú'),
-                          content: const Text(
-                            'Bạn có chắc chắn muốn xóa ghi chú này không?',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, false),
-                              child: const Text('Hủy'),
+                        builder:
+                            (context) => AlertDialog(
+                              title: const Text('Xóa ghi chú'),
+                              content: const Text(
+                                'Bạn có chắc chắn muốn xóa ghi chú này không?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.pop(context, false),
+                                  child: const Text('Hủy'),
+                                ),
+                                FilledButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: colorScheme.error,
+                                  ),
+                                  child: const Text('Xóa'),
+                                ),
+                              ],
                             ),
-                            FilledButton(
-                              onPressed: () => Navigator.pop(context, true),
-                              child: const Text('Xóa'),
-                            ),
-                          ],
-                        ),
                       );
 
                       if (confirm == true) {
                         await _handleDelete();
-                        if (!mounted) return;
-                        Navigator.pop(context);
                       }
                     },
                   ),
