@@ -6,9 +6,9 @@
 | ![Giao diện sáng](ui/image.png) | ![Giao diện tối trên tablet](ui/image-2.png) | ![Giao diện mobile xếp dọc](ui/image-1.png) |
 
 ## Project 2 - Todo App
-| Màn hình danh sách | Thêm công việc | Filter công việc |
+| Màn hình danh sách + Thêm công việc | Filter công việc |
 |------------------|----------------|----------------|
-| ![Danh sách công việc + Thêm công việc](ui/project2image-1.png) | ![Thêm công việc](ui/project2image-2.png) | ![Filter công việc](ui/project2image.png) |
+| ![Danh sách công việc + Thêm công việc](ui/project2image-1.png) | ![Filter công việc](ui/project2image.png) |
 
 ## Project 3 - News Reader App
 | Home screen | Detail screen |
